@@ -9,14 +9,17 @@ def calculate_discount(price, discount_percentage):
     return discounted_price
 
 @pytest.fixture
-def driver():
+def driver(request):
+    browser = request.config.getoption("--browser")
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Run Chrome in headless mode (without UI)
-    driver = webdriver.Chrome(options=options)
-    yield driver
-    driver.quit()
+    if browser == "chrome":
+        options.add_argument('--headless')  # Run Chrome in headless mode (without UI)
+        driver = webdriver.Chrome(options=options)
+        yield driver
+        driver.quit()
 
 # 💰 Valid input values test
+@pytest.mark.parametrize("browser", ["chrome"])
 def test_valid_input_values(driver):
     price = 100
     discount_percentage = 50
@@ -26,7 +29,8 @@ def test_valid_input_values(driver):
     assert discounted_price == expected_discounted_price
     
 # ❌ Price less than or equal to 0 test
-def test_price_less_than_or_equal_to_0():
+@pytest.mark.parametrize("browser", ["chrome"])
+def test_price_less_than_or_equal_to_0(driver):
     price = 0
     discount_percentage = 50
 
@@ -34,7 +38,8 @@ def test_price_less_than_or_equal_to_0():
         calculate_discount(price, discount_percentage)
 
 # ❌ Discount percentage less than 0 test
-def test_discount_percentage_less_than_0():
+@pytest.mark.parametrize("browser", ["chrome"])
+def test_discount_percentage_less_than_0(driver):
     price = 100
     discount_percentage = -50
 
@@ -42,12 +47,10 @@ def test_discount_percentage_less_than_0():
         calculate_discount(price, discount_percentage)
 
 # ❌ Discount percentage greater than 100 test
-def test_discount_percentage_greater_than_100():
+@pytest.mark.parametrize("browser", ["chrome"])
+def test_discount_percentage_greater_than_100(driver):
     price = 100
     discount_percentage = 150
 
     with pytest.raises(ValueError, match="Invalid input values"):
         calculate_discount(price, discount_percentage)
-
-if __name__ == "__main__":
-    pytest.main(["-v", __file__,r"--html=C:\Users\IB\Desktop\PapeDocs\SELENIUM_WEBDRIVER\TPscripts\export\rapport.html"])
