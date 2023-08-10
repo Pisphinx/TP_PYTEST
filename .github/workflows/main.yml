@@ -7,59 +7,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
-
-    - name: Create and activate virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest
-        pip install pytest-xdist
-        pip install pytest-html
-        pip install selenium
-
-    - name: Run tests with pytest and Selenium
-      run: |
-        pytest -n auto --browser chrome
-
-    - name: Generate and store test reports
-      run: |
-        pytest --html=report.html --self-contained-html
-        mv report.html $GITHUB_WORKSPACE
-
-    - name: Upload test reports
-      uses: actions/upload-artifact@v2
-      with:
-        name: test-reports
-        path: $GITHUB_WORKSPACE/report.html
-name: CI with Pytest and Selenium
-
-on:
-  push:
-    branches: [ "main" ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      with:
-        ref: v2 # Use v2 version to ensure node16 is used
       
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -78,12 +29,12 @@ jobs:
         pip install pytest
         pip install pytest-xdist
         pip install pytest-html
-        pip install time 
+        pip install selenium
+        pip install time  # You can remove this line if not needed
     
-    
-    - name: Run tests with pytest
+    - name: Run tests with pytest and Selenium
       run: |
-        pytest -n auto
+        pytest -n auto --browser chrome
         
     - name: Generate and store test reports
       run: |
