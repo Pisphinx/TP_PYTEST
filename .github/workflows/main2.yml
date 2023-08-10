@@ -32,11 +32,7 @@ jobs:
     
     - name: Run tests with pytest and Selenium
       run: |
-        pytest -n auto --browser chrome
-        
-    - name: Run your custom script
-      run: |
-        python path/to/your/script.py
+        BROWSER=chrome pytest -n auto
         
     - name: Generate and store test reports
       run: |
