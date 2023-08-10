@@ -16,7 +16,7 @@ def driver():
     yield driver
     driver.quit()
 
-# 💰 Valid input values test
+#  Valid input values test
 def test_valid_input_values(driver):
     price = 100
     discount_percentage = 50
@@ -25,7 +25,7 @@ def test_valid_input_values(driver):
     discounted_price = calculate_discount(price, discount_percentage)
     assert discounted_price == expected_discounted_price
     
-# ❌ Price less than or equal to 0 test
+#  Price less than or equal to 0 test
 def test_price_less_than_or_equal_to_0():
     price = 0
     discount_percentage = 50
@@ -33,7 +33,7 @@ def test_price_less_than_or_equal_to_0():
     with pytest.raises(ValueError, match="Invalid input values"):
         calculate_discount(price, discount_percentage)
 
-# ❌ Discount percentage less than 0 test
+#  Discount percentage less than 0 test
 def test_discount_percentage_less_than_0():
     price = 100
     discount_percentage = -50
@@ -41,7 +41,7 @@ def test_discount_percentage_less_than_0():
     with pytest.raises(ValueError, match="Invalid input values"):
         calculate_discount(price, discount_percentage)
 
-# ❌ Discount percentage greater than 100 test
+#  Discount percentage greater than 100 test
 def test_discount_percentage_greater_than_100():
     price = 100
     discount_percentage = 150
