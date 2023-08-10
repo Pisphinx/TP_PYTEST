@@ -10,22 +10,36 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses : actions/checkout@v2
+      uses: actions/checkout@v2
       
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: 3.x
         
-    - name: Install dependencies
+    - name: Create and activate virtual environment
       run: |
         python -m venv venv
         source venv/bin/activate
+        
+    - name: Install dependencies
+      run: |
         pip install --upgrade pip
+        pip install -r requirements.txt
         pip install pytest
-        pip install selenium
+        pip install pytest-xdist  # For parallel test execution
     
     - name: Run tests with pytest
       run: |
-        source venv/bin/activate
-        pytest
+        pytest -n auto  # Run tests in parallel using available cores
+        
+    - name: Generate and store test reports
+      run: |
+        pytest --html=report.html --self-contained-html  # Generate HTML report
+        mv report.html $GITHUB_WORKSPACE  # Move report to workspace
+        
+    - name: Upload test reports
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: $GITHUB_WORKSPACE/report.html
