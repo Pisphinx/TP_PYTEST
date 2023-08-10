@@ -27,6 +27,7 @@ jobs:
         source venv/bin/activate
         pip install --upgrade pip
         pip install pytest
+        pip intall selenium
     - name: Run test
       run: |
         source venv/bin/activate
