@@ -37,10 +37,10 @@ jobs:
     - name: Generate and store test reports
       run: |
         pytest --html=report.html --self-contained-html
-        mv report.html $GITHUB_WORKSPACE
+        mv report.html $GITHUB_WORKSPACE/test_report.html  # Change the name of the report file
         
     - name: Upload test reports
       uses: actions/upload-artifact@v2
       with:
         name: test-reports
-        path: $GITHUB_WORKSPACE/report.html
+        path: $GITHUB_WORKSPACE/test_report.html  # Update the file name here as well
