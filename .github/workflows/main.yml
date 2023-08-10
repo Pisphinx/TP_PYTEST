@@ -11,6 +11,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: v2 # Use v2 version to ensure node16 is used
       
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -27,16 +29,16 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest
-        pip install pytest-xdist  # For parallel test execution
+        pip install pytest-xdist
     
     - name: Run tests with pytest
       run: |
-        pytest -n auto  # Run tests in parallel using available cores
+        pytest -n auto
         
     - name: Generate and store test reports
       run: |
-        pytest --html=report.html --self-contained-html  # Generate HTML report
-        mv report.html $GITHUB_WORKSPACE  # Move report to workspace
+        pytest --html=report.html --self-contained-html
+        mv report.html $GITHUB_WORKSPACE
         
     - name: Upload test reports
       uses: actions/upload-artifact@v2
