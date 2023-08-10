@@ -1,5 +1,4 @@
 import pytest
-from selenium import webdriver
 
 def calculate_discount(price, discount_percentage):
     if price <= 0 or discount_percentage < 0 or discount_percentage > 100:
@@ -8,46 +7,25 @@ def calculate_discount(price, discount_percentage):
     discounted_price = price - discount_amount
     return discounted_price
 
-@pytest.fixture
-def driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Run Chrome in headless mode (without UI)
-    driver = webdriver.Chrome(options=options)
-    yield driver
-    driver.quit()
 
-# 💰 Valid input values test
-def test_valid_input_values(driver):
-    price = 100
-    discount_percentage = 50
-    expected_discounted_price = 50
+def test_dsicount_0():
+    assert calculate_discount(20,50) == 10
+    assert calculate_discount(200,50) == 100
+    assert calculate_discount(100,76) == 24
 
-    discounted_price = calculate_discount(price, discount_percentage)
-    assert discounted_price == expected_discounted_price
-    
-# ❌ Price less than or equal to 0 test
-def test_price_less_than_or_equal_to_0():
-    price = 0
-    discount_percentage = 50
+def test_discount_1():
+    assert calculate_discount(20,0) == 20
+    assert calculate_discount(200,0) == 200
 
-    with pytest.raises(ValueError, match="Invalid input values"):
-        calculate_discount(price, discount_percentage)
+def test_discount_2():
+    assert calculate_discount(20,100) == 0
+    assert calculate_discount(200000,100) == 0
 
-# ❌ Discount percentage less than 0 test
-def test_discount_percentage_less_than_0():
-    price = 100
-    discount_percentage = -50
+def test_discount_error():
+    with pytest.raises(ValueError,match="Invalid input values"):
+        calculate_discount(-10,1)
+    with pytest.raises(ValueError,match="Invalid input value"):
+        calculate_discount(-20,1)
+    with pytest.raises(ValueError,match="Invalid input values"):
+        calculate_discount(10,-1)
 
-    with pytest.raises(ValueError, match="Invalid input values"):
-        calculate_discount(price, discount_percentage)
-
-# ❌ Discount percentage greater than 100 test
-def test_discount_percentage_greater_than_100():
-    price = 100
-    discount_percentage = 150
-
-    with pytest.raises(ValueError, match="Invalid input values"):
-        calculate_discount(price, discount_percentage)
-
-if __name__ == "__main__":
-    pytest.main(["-v", __file__,r"--html=C:\Users\IB\Desktop\PapeDocs\SELENIUM_WEBDRIVER\TPscripts\export\rapport.html"])
