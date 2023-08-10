@@ -30,11 +30,14 @@ jobs:
         pip install pytest-xdist
         pip install pytest-html
         pip install selenium
-        pip install time  # You can remove this line if not needed
     
     - name: Run tests with pytest and Selenium
       run: |
         pytest -n auto --browser chrome
+        
+    - name: Run your custom script
+      run: |
+        python path/to/your/script.py
         
     - name: Generate and store test reports
       run: |
