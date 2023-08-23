@@ -1,0 +1,55 @@
+name: CI with Pytest and Selenium
+
+on:
+  workflow_dispatch: # This workflow will be triggered manually through the GitHub Actions UI
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - env: Dev
+          - env: QA
+          - env: DevOps
+          - env: Prod
+          - env: Stagiaire
+          - env: Externe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Create and activate virtual environment
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pytest
+          pip install pytest-xdist
+          pip install pytest-html
+          pip install selenium
+
+      - name: Run tests with pytest and Selenium
+        run: |
+          BROWSER=chrome pytest -n auto
+
+      - name: Generate and store test reports
+        run: |
+          pytest --html=report.html --self-contained-html
+          mv report.html $GITHUB_WORKSPACE/test_report.html  # Change the name of the report file
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: $GITHUB_WORKSPACE/test_report.html
