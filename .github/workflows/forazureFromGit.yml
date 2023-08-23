@@ -1,33 +1,47 @@
-trigger:
-- main  # Déclencher le pipeline lorsque la branche "main" est mise à jour
+name: CI with Pytest and Selenium
 
-pr‍ools:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.x'  # Version de Python que vous souhaitez utiliser
-    addToPath: true
+on:
+  push:
+    branches:
+      - main
 
-- script: |
-    python -m venv venv
-    source venv/bin/activate
-    pip install --upgrade pip
-    pip install pytest
-    pip install pytest-xdist
-    pip install pytest-html
-    pip install selenium
-  displayName: 'Installer les dépendances'
-
-- script: |
-    BROWSER=chrome pytest -n auto
-  displayName: 'Exécuter les tests avec pytest et Selenium'
-
-- script: |
-    pytest --html=report.html --self-contained-html
-    mv report.html $(Build.ArtifactStagingDirectory)/test_report.html
-  displayName: 'Générer et stocker les rapports de test'
-
-- task: PublishPipelineArtifact@0
-  inputs:
-    artifactName: 'test-reports'
-    targetPath: $(Build.ArtifactStagingDirectory)/test_report.html
-  displayName: 'Télécharger les rapports de test'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+        
+    - name: Create and activate virtual environment
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install pytest
+        pip install pytest-xdist
+        pip install pytest-html
+        pip install selenium
+    
+    - name: Run tests with pytest and Selenium
+      run: |
+        BROWSER=chrome pytest -n auto
+        
+    - name: Generate and store test reports
+      run: |
+        pytest --html=report.html --self-contained-html
+        mv report.html $GITHUB_WORKSPACE/test_report.html  # Change the name of the report file
+        
+    - name: Upload test reports
+      uses: actions/upload-artifact@v2
+      with:
+        name: test-reports
+        path: $GITHUB_WORKSPACE/test_report.html
