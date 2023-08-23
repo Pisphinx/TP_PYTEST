@@ -1,4 +1,4 @@
-name: CI with Pytest and Selenium
+name: My GitHub Action
 
 on:
   push:
